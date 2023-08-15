@@ -1,72 +1,53 @@
 package com.khadri.spring.mvc.service;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.khadri.spring.mvc.entity.Employee;
+import com.khadri.spring.mvc.dao.EmployeeDAO;
+import com.khadri.spring.mvc.dto.EmployeeDTO;
+import com.khadri.spring.mvc.form.EmployeeForm;
+import com.khadri.spring.mvc.mapper.EmployeeFormToDTO;
 
 @Service
 public class EmployeeService {
 
-	public List<Employee> listEmployees() {
+	@Autowired
+	private EmployeeDAO dao;
 
-		return mapEmployees();
+	@Autowired
+	private EmployeeFormToDTO formToDTO;
+
+	public void createEmployee(EmployeeForm employeeForm) {
+
+		EmployeeDTO dtoEmployee = formToDTO.map(employeeForm);
+		
+		dao.createEmployee(dtoEmployee);
 	}
 
-	// Mock employee object
-	private List<Employee> mapEmployees() {
-		Employee emp1 = new Employee();
-		emp1.setId(101);
-		emp1.setName("JHON");
-		emp1.setSalary(50000.00);
+	public void updateEmpployee(EmployeeForm employeeForm) {
 
-		Employee emp2 = new Employee();
-		emp2.setId(102);
-		emp2.setName("ALLEN");
-		emp2.setSalary(60000.00);
+		EmployeeDTO dtoEmployee = formToDTO.map(employeeForm);
 
-		Employee emp3 = new Employee();
-		emp3.setId(103);
-		emp3.setName("JHON");
-		emp3.setSalary(50000.00);
+		dao.updateEmpployee(dtoEmployee);
+	}
 
-		Employee emp4 = new Employee();
-		emp4.setId(104);
-		emp4.setName("GIRIDHAR");
-		emp4.setSalary(90000.00);
+	public List<EmployeeForm> listEmployees() {
 
-		Employee emp5 = new Employee();
-		emp5.setId(105);
-		emp5.setName("VIKRAM");
-		emp5.setSalary(60000.00);
+		Function<EmployeeDTO, EmployeeForm> mapper = (empDto) -> {
+			EmployeeForm form = new EmployeeForm();
+			form.setId(empDto.getEmpId());
+			form.setName(empDto.getEmpName());
+			form.setSalary(empDto.getEmpSalary());
+			return form;
+		};
 
-		Employee emp6 = new Employee();
-		emp6.setId(106);
-		emp6.setName("COSTINE");
-		emp6.setSalary(40000.00);
+		List<EmployeeForm> listForm = dao.listEmployees().stream().map(mapper).collect(Collectors.toList());
 
-		Employee emp7 = new Employee();
-		emp7.setId(107);
-		emp7.setName("MIKE");
-		emp7.setSalary(50000.00);
-
-		Employee emp8 = new Employee();
-		emp8.setId(108);
-		emp8.setName("BABAJAN");
-		emp8.setSalary(70000.00);
-
-		Employee emp9 = new Employee();
-		emp9.setId(109);
-		emp9.setName("JEELAN");
-		emp9.setSalary(100000.00);
-
-		Employee emp10 = new Employee();
-		emp10.setId(110);
-		emp10.setName("JHON");
-		emp10.setSalary(50000.00);
-
-		return List.of(emp1, emp2, emp4, emp3, emp6, emp5, emp9, emp7, emp8, emp10);
+		return listForm;
 	}
 
 }

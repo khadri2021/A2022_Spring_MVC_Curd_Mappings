@@ -1,8 +1,8 @@
-<%@ page import="com.khadri.spring.mvc.entity.Employee" %>
+<%@ page import="com.khadri.spring.mvc.form.EmployeeForm" %>
 
 Your result
 
-<% Employee employee = (Employee)request.getAttribute("emp");%>
+<% EmployeeForm employee = (EmployeeForm)request.getAttribute("emp");%>
 
 <table border=2>
   <tr> <th>EMP NO</th> <th>EMP NAME</th> <th>EMP SALARY </th> </tr>
